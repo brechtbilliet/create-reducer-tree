@@ -28,28 +28,28 @@ export function fetchActionsForTree(item: any, actionTypes: Array<string> = []):
     });
     return actionTypes;
 }
-let states = [];
 export function generateInitialState(tree: any): any {
-    function removeActionsAndReducers(state) {
-        for (var i in state) {
-            if (i === "actions" || i === "reducer" || i === "initialState") {
-                delete state[i];
+    function handleStateChunk(state: any) {
+        let newState = {};
+        let keys = fetchKeysInItem(state);
+        keys.forEach(key => {
+            if (key !== "initialState" && key !== "actions" && key !== "reducer") {
+                newState[key] = handleStateChunk(state[key]);
             }
-            removeActionsAndReducers(state[i]);
-        }
+            if (key === "initialState") {
+                newState = state[key];
+            }
+        });
+        return newState;
     }
 
     let state = JSON.parse(JSON.stringify(tree));
-    removeActionsAndReducers(state);
-    states.push(state);
-    return state;
+    return handleStateChunk(state);
 }
-
 export function createParentReducer(reducerTree: any): Function {
     let actions = fetchActionsForTree(reducerTree);
     let keys = fetchKeysInItem(reducerTree);
-    let initialState = reducerTree.initialState || generateInitialState(reducerTree);
-    console.log(initialState)
+    let initialState =  generateInitialState(reducerTree);
     return function (state: any = clone(initialState), action: {type: string, payload: any}) {
         if (actions.indexOf(action.type) > -1) {
             let newState = {};
@@ -83,7 +83,7 @@ export function checkValidityBranch(reducerTree: any) {
     });
 }
 
-export function getDeepestLevels(reducerTree: any, deepestLevels: any = []): Array<{actions: Array<string>, reducer: Function}> {
+export function getDeepestLevels(reducerTree: any, deepestLevels: any = []): Array<{actions: Array<string>, reducer: Function, initialState: any}> {
     let keys: Array<string> = fetchKeysInItem(reducerTree);
     // if no keys except maybe "actions" or "reducer"
     let filtered = keys.filter((key) => key !== "actions" && key !== "reducer" && key !== "initialState");

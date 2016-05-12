@@ -1,13 +1,13 @@
 {
   "name": "create-reducer-tree",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "description": "A tool to create a redux reducer composition tree",
   "main": "dist/create-reducer-tree.js",
   "typings": "dist/create-reducer-tree.d.ts",
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf dist && typings i",
-    "prepublish": "npm run build",
+    "prepublish": "npm run test && npm run build",
     "test": "karma start"
   },
   "keywords": [
