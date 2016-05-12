@@ -12,11 +12,11 @@ export function createReducerTree(reducerTree: any): any {
     return compositionTree;
 }
 
-export function fetchKeysInItem(item: any): Array<string> {
+function fetchKeysInItem(item: any): Array<string> {
     return (Array.isArray(item) || typeof item !== "object") ? [] : Object.keys(item);
 }
 
-export function fetchActionsForTree(item: any, actionTypes: Array<string> = []): Array<string> {
+function fetchActionsForTree(item: any, actionTypes: Array<string> = []): Array<string> {
     let keys: Array<string> = fetchKeysInItem(item);
     keys.forEach((key: string) => {
         if (typeof item[key] === "object" && item[key]) {
@@ -28,7 +28,7 @@ export function fetchActionsForTree(item: any, actionTypes: Array<string> = []):
     });
     return actionTypes;
 }
-export function generateInitialState(tree: any): any {
+function generateInitialState(tree: any): any {
     function handleStateChunk(state: any) {
         let newState = {};
         let keys = fetchKeysInItem(state);
@@ -46,10 +46,10 @@ export function generateInitialState(tree: any): any {
     let state = JSON.parse(JSON.stringify(tree));
     return handleStateChunk(state);
 }
-export function createParentReducer(reducerTree: any): Function {
+function createParentReducer(reducerTree: any): Function {
     let actions = fetchActionsForTree(reducerTree);
     let keys = fetchKeysInItem(reducerTree);
-    let initialState =  generateInitialState(reducerTree);
+    let initialState = generateInitialState(reducerTree);
     return function (state: any = clone(initialState), action: {type: string, payload: any}) {
         if (actions.indexOf(action.type) > -1) {
             let newState = {};
@@ -68,7 +68,7 @@ export function createParentReducer(reducerTree: any): Function {
     };
 }
 
-export function checkValidityBranch(reducerTree: any) {
+function checkValidityBranch(reducerTree: any) {
     let deepestLevels = getDeepestLevels(reducerTree);
     deepestLevels.forEach((deepestLevel) => {
         if (!deepestLevel.reducer || typeof deepestLevel.reducer !== "function") {
@@ -83,7 +83,7 @@ export function checkValidityBranch(reducerTree: any) {
     });
 }
 
-export function getDeepestLevels(reducerTree: any, deepestLevels: any = []): Array<{actions: Array<string>, reducer: Function, initialState: any}> {
+function getDeepestLevels(reducerTree: any, deepestLevels: any = []): Array<{actions: Array<string>, reducer: Function, initialState: any}> {
     let keys: Array<string> = fetchKeysInItem(reducerTree);
     // if no keys except maybe "actions" or "reducer"
     let filtered = keys.filter((key) => key !== "actions" && key !== "reducer" && key !== "initialState");
