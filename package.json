@@ -1,6 +1,6 @@
 {
   "name": "create-reducer-tree",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A tool to create a redux reducer composition tree",
   "main": "dist/create-reducer-tree.js",
   "typings": "dist/create-reducer-tree.d.ts",
@@ -18,7 +18,6 @@
   "license": "MIT",
   "devDependencies": {
     "babel-core": "6.7.6",
-    "clone": "1.0.2",
     "core-js": "2.4.0",
     "deep-freeze": "0.0.1",
     "jasmine-core": "2.4.1",
@@ -38,5 +37,8 @@
     "rimraf": "2.5.2",
     "wallaby-webpack": "0.0.22",
     "webpack": "1.12.15"
+  },
+  "dependencies": {
+    "clone": "1.0.2"
   }
 }

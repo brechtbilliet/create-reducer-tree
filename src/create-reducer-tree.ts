@@ -1,5 +1,7 @@
-import {require} from "./create-reducer-tree.spec";
-import * as clone from "clone";
+declare function require(string: string): any;
+
+let clone = require("clone");
+
 export function createReducerTree(reducerTree: any): any {
     let compositionTree = {};
     let keys = fetchKeysInItem(reducerTree);
@@ -26,11 +28,11 @@ export function fetchActionsForTree(item: any, actionTypes: Array<string> = []):
     });
     return actionTypes;
 }
-
+let states = [];
 export function generateInitialState(tree: any): any {
     function removeActionsAndReducers(state) {
         for (var i in state) {
-            if (i === "actions" || i === "reducer") {
+            if (i === "actions" || i === "reducer" || i === "initialState") {
                 delete state[i];
             }
             removeActionsAndReducers(state[i]);
@@ -39,13 +41,15 @@ export function generateInitialState(tree: any): any {
 
     let state = JSON.parse(JSON.stringify(tree));
     removeActionsAndReducers(state);
+    states.push(state);
     return state;
 }
 
 export function createParentReducer(reducerTree: any): Function {
     let actions = fetchActionsForTree(reducerTree);
     let keys = fetchKeysInItem(reducerTree);
-    let initialState = generateInitialState(reducerTree);
+    let initialState = reducerTree.initialState || generateInitialState(reducerTree);
+    console.log(initialState)
     return function (state: any = clone(initialState), action: {type: string, payload: any}) {
         if (actions.indexOf(action.type) > -1) {
             let newState = {};
@@ -73,19 +77,22 @@ export function checkValidityBranch(reducerTree: any) {
         if (!deepestLevel.actions || deepestLevel.actions.length === 0) {
             throw Error("The deepest level of every reducer branch should have at least one action");
         }
+        if (deepestLevel.initialState === undefined) {
+            throw Error("The deepest level of every reducer branch should have initialData");
+        }
     });
 }
 
 export function getDeepestLevels(reducerTree: any, deepestLevels: any = []): Array<{actions: Array<string>, reducer: Function}> {
     let keys: Array<string> = fetchKeysInItem(reducerTree);
     // if no keys except maybe "actions" or "reducer"
-    let filtered = keys.filter((key) => key !== "actions" && key !== "reducer");
+    let filtered = keys.filter((key) => key !== "actions" && key !== "reducer" && key !== "initialState");
     if (filtered.length === 0) {
         deepestLevels.push(reducerTree);
     }
     keys.forEach((key: string) => {
         if (typeof reducerTree[key] === "object" && reducerTree[key]) {
-            if (key !== "actions" && key !== "reducer") {
+            if (key !== "actions" && key !== "reducer" && key !== "initialState") {
                 getDeepestLevels(reducerTree[key], deepestLevels);
             }
         }

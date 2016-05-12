@@ -20,45 +20,49 @@ At the deepest level we always define **actions and one reducer.**
 
 ```typescript
 let reducerComposer: any = {
-    groceryManagement /* needs reducer*/: {
-        data /* needs reducer*/: {
+    groceryManagement: {
+        data: {
             groceries: {
-                actions: ["ACTION1", "ACTION2"],
+                initialState: [],
+                actions: ["GROCERIES"],
                 reducer: groceriesReducer
             }
         },
-        container /* needs reducer*/: {
+        container: {
             currentList: {
-                actions: ["ACTION3", "ACTION4"],
+                initialState: null,
+                actions: ["CURRENTLIST", "CURRENTLIST2"],
                 reducer: currentListReducer
             }
         }
     },
     listManagement: {
-        data /* needs reducer*/: {
+        data: {
             lists: {
-                actions: ["ACTION5"],
+                initialState: [],
+                actions: ["LISTS"],
                 reducer: listsReducer
             }
         },
-        container /* needs reducer*/: {
+        container: {
             groceryListsEdit: {
-                actions: ["ACTION6"],
+                initialState: {list: null},
+                actions: ["GROCERYLISTSEDIT"],
                 reducer: groceryListsEditReducer
             }
         }
     },
     common: {
-        container /* needs reducer*/: {
+        container: {
             application: {
-                actions: ["ACTION7"],
+                initialState: {isBusy: false},
+                actions: ["APPLICATION"],
                 reducer: applicationReducer
             },
-            collapsableSidebar /* needs reducer*/: {
-                isCollapsed: {
-                    actions: ["ACTION8"],
-                    reducer: collapsableSidebarReducer
-                }
+            collapsableSidebar: {
+                initialState: {isCollapsed: false},
+                actions: ["COLLAPSABLESIDEBAR"],
+                reducer: collapsableSidebarReducer
             }
         }
     }
@@ -90,7 +94,7 @@ Writing the reduces above can take a lot of time to write/unittest/maintain.
 This is an example of a reducer that we had to write before to optimize the tree.
 
 ```typescript
-export function groceryManagementReducer(state: GroceryManagementState = INITIAL_STATE.groceryManagement, action: Action): GroceryManagementState {
+export function groceryManagementReducer(state: GroceryManagementState = {data:{...}}, action: Action): GroceryManagementState {
     switch (action.type) {
         case "ACTION1":
         case "ACTION2":

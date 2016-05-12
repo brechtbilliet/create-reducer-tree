@@ -15,12 +15,14 @@ let reducerComposer: any = {
     groceryManagement: {
         data: {
             groceries: {
+                initialState: [],
                 actions: ["GROCERIES"],
                 reducer: groceriesReducer
             }
         },
         container: {
             currentList: {
+                initialState: null,
                 actions: ["CURRENTLIST", "CURRENTLIST2"],
                 reducer: currentListReducer
             }
@@ -29,12 +31,14 @@ let reducerComposer: any = {
     listManagement: {
         data: {
             lists: {
+                initialState: [],
                 actions: ["LISTS"],
                 reducer: listsReducer
             }
         },
         container: {
             groceryListsEdit: {
+                initialState: {list: null},
                 actions: ["GROCERYLISTSEDIT"],
                 reducer: groceryListsEditReducer
             }
@@ -43,10 +47,12 @@ let reducerComposer: any = {
     common: {
         container: {
             application: {
+                initialState: {isBusy: false},
                 actions: ["APPLICATION"],
                 reducer: applicationReducer
             },
             collapsableSidebar: {
+                initialState: {isCollapsed: false},
                 actions: ["COLLAPSABLESIDEBAR"],
                 reducer: collapsableSidebarReducer
             }
@@ -83,6 +89,18 @@ describe("When createReducerTree()", () => {
                 .toThrowError("The deepest level of every reducer branch should have at least one action");
         });
     });
+    describe("when branch does not have any initialState", () => {
+        it("should throw an error", () => {
+            let badReducerComposer = clone(reducerComposer);
+            badReducerComposer.listManagement.data.lists.initialState = undefined;
+            expect(() => createReducerTree(badReducerComposer))
+                .toThrowError("The deepest level of every reducer branch should have initialData");
+
+            delete badReducerComposer.listManagement.data.lists.initialState;
+            expect(() => createReducerTree(badReducerComposer))
+                .toThrowError("The deepest level of every reducer branch should have initialData");
+        });
+    });
 
     describe("when the groceryManagement reducer is called", () => {
         describe("and the action is GROCERIES, CURRENTLIST OR CURRENTLIST2", () => {
@@ -92,7 +110,7 @@ describe("When createReducerTree()", () => {
                 deepFreeze(initialState);
                 currentListReducer.and.returnValue({})
                 groceriesReducer.and.returnValue([]);
-                
+
                 let result = groceryManagementReducer(initialState, {type: "GROCERIES"});
                 expect(Object.keys(result)).toEqual(Object.keys(reducerComposer.groceryManagement));
                 expect(result.data.groceries).toEqual(initialState.data.groceries);
