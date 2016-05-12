@@ -1,0 +1,7 @@
+reports
+.idea
+typings
+dist/**/*.spec.*
+dist/index.js
+dist/index.js.map
+dist/index.d.ts
