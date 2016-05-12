@@ -47,10 +47,8 @@ let reducerComposer: any = {
                 reducer: applicationReducer
             },
             collapsableSidebar: {
-                isCollapsed: {
-                    actions: ["COLLAPSABLESIDEBAR"],
-                    reducer: collapsableSidebarReducer
-                }
+                actions: ["COLLAPSABLESIDEBAR"],
+                reducer: collapsableSidebarReducer
             }
         }
     }

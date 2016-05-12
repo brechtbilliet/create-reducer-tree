@@ -1,6 +1,6 @@
 {
   "name": "create-reducer-tree",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A tool to create a redux reducer composition tree",
   "main": "dist/create-reducer-tree.js",
   "typings": "dist/create-reducer-tree.d.ts",

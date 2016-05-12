@@ -1,3 +1,5 @@
+import {require} from "./create-reducer-tree.spec";
+import * as clone from "clone";
 export function createReducerTree(reducerTree: any): any {
     let compositionTree = {};
     let keys = fetchKeysInItem(reducerTree);
@@ -25,11 +27,26 @@ export function fetchActionsForTree(item: any, actionTypes: Array<string> = []):
     return actionTypes;
 }
 
+export function generateInitialState(tree: any): any {
+    function removeActionsAndReducers(state) {
+        for (var i in state) {
+            if (i === "actions" || i === "reducer") {
+                delete state[i];
+            }
+            removeActionsAndReducers(state[i]);
+        }
+    }
+
+    let state = JSON.parse(JSON.stringify(tree));
+    removeActionsAndReducers(state);
+    return state;
+}
+
 export function createParentReducer(reducerTree: any): Function {
     let actions = fetchActionsForTree(reducerTree);
     let keys = fetchKeysInItem(reducerTree);
-
-    return function (state: any, action: {type: string, payload: any}) {
+    let initialState = generateInitialState(reducerTree);
+    return function (state: any = clone(initialState), action: {type: string, payload: any}) {
         if (actions.indexOf(action.type) > -1) {
             let newState = {};
             if (keys.indexOf("actions") > -1) {
