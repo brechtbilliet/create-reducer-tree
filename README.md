@@ -100,7 +100,7 @@ To get this behavior (and make sure that not the entire tree gets new references
 <li>commonContainerReducer </li>
 <li>commonCollapsableSidebarReducer </li>
 </ul>
-Writing the reduces above can take a lot of time to write/unittest/maintain.
+Writing the reducers above can take a lot of time to write/unittest/maintain.
 
 This is an example of a reducer that we had to write before to optimize the tree.
 
